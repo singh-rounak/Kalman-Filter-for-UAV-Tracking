@@ -1,4 +1,4 @@
-;clc; close all;
+clc; close all;
 
 %initial state
 xo=25;
@@ -15,15 +15,18 @@ V=[ 280 282 285 286 290 292 294 296 299 302]; % Velocity in 'X' direction
 %Process Errors in Process Covaiance Matrix
 del_px=20; %initial covariance matrix is choosen intuitively
 del_pv=5;
+
 %initial conditions
 acc_x=2;
 del_t=1;
 vx=2;
 del_x=25; %uncertainity in the measurement
+
 %Observation Error
 del_X=25;
 del_VX=6;
 Xk=[];
+
 %The Predicted State
 A=[1 del_t;0 1];
 B=[(0.5*((del_t).^2));del_t];
@@ -35,23 +38,31 @@ Xkp1=((A*Xk_));
 Xkp2=((B*uk));   
 Xkp=(Xkp1+Xkp2);%this is our first estimation
 p=[p;Xkp];
+
+
 %Initialising Process Covariance Matrix
 Pk_=[((del_px).^2) 0;0 ((del_pv).^2)];
 %Predicted Process Covariance Matrix
 Pkp1=((A)*(Pk_));
 Pkp2=((Pkp1)*(A'));
 pkp=(Pkp2-[0 Pkp2(2);Pkp2(3) 0]); %since the 2nd and 3rd term are not imp.
+
+
 %Calculating the Kalman gain
 R=[((del_X)^2) 0;0 ((del_VX)^2)];
 H=[1 0 ; 0 1];
 K=((pkp)*H')/((H*pkp*H')+R);
+
 %The New Observation
 k=k+1;
 Ykm=[X(k);V(k)];
 C=[1 0;0 1];
 Yk=C*Ykm;
+
+
 %Calculating the Current State
 Xk=[Xk; Xkp + K*(Yk-(H*(Xkp)))];
+
 %Updating the process covariance matrix
 Pk1=((eye)-(K*H))*pkp;
 pk=(Pk1-[0 Pk1(3);Pk1(2) 0]);
@@ -74,6 +85,7 @@ for i=2:2:(length(p))
     prv=[prv;p(i)];
 end
 
+
 %%% Y-D Calculations:
 Y1=[1200 1300 1480 1590 1700 1800 1990 2090 2200 2300]; %Position in Y
 V1=[20 22 23 25 27 29 32 34 37 40];% Velocity in 'Y' direction
@@ -90,10 +102,12 @@ acc_y=2;
 del_t=1;
 vy=2;
 del_y=25; %uncertainity in the measurement
+
 %Observation Error
 del_Y=25;
 del_VY=6;
 Yk=[];
+
 %The Predicted State
 A=[1 del_t;0 1];
 fprintf A;
@@ -108,16 +122,20 @@ Ykp1=((A*Yk_));
 Ykp2=((B*uk2));   
 Ykp=(Ykp1+Ykp2);%this is our first estimation
 q=[q;Ykp];
+
 %Initialising Process Covariance Matrix
 Pk2_=[((del_py).^2) 0;0 ((del_pv1).^2)];
+
 %Predicted Process Covariance Matrix
 Pkp12=((A)*(Pk2_));
 Pkp22=((Pkp12)*(A'));
 pkp2=(Pkp22-[0 Pkp22(2);Pkp22(3) 0]); %since the 2nd and 3rd term are not imp.
+
 %Calculating the Kalman gain
 R1=[((del_Y)^2) 0;0 ((del_VY)^2)];
 H=[1 0 ; 0 1];
 K=((pkp2)*H')/((H*pkp2*H')+R1);
+
 %The New Observation
 k=k+1;
 Ykm1=[Y1(k);V1(k)];
@@ -126,6 +144,7 @@ Yk1=C*Ykm1;
 %Calculating the Current State
 Yk=[Yk; Ykp + K*(Yk1-(H*(Ykp)))];
 Pk12=((eye)-(K*H))*pkp2;
+
 %Updating the process covariance matrix
 pk2=(Pk12-[0 Pk12(3);Pk12(2) 0]);
 k=k+1;
@@ -152,18 +171,26 @@ end
 %V3 = 0.07.*[Z];
 Z=[80 85 90 95 100 115 130 145 150 165]; %Position 
 V3 =[7.2 7.4 7.6 7.9 8.1 8.3 8.5 8.7 8.9 9.0]; %Velocity
+
+
 %Pr ocess Errors in Process Covaiance Matrix
 del_pz=10; %initial covariance matrix is choosen intuitively
 del_pv3=5;
+
+
 %initial conditions
 acc_z=2;
 del_t=1;
 v3z=2;
 del_z=12; %uncertainity in the measurement
+
+
 %Observation Error
 del_Z=25;
 del_VZ=6;
 Zk=[];
+
+
 %The Predicted State
 A=[1 del_t;0 1];
 B=[(0.5*((del_t).^2));del_t];
@@ -175,8 +202,10 @@ Zkp1=((A*Zk_));
 Zkp2=((B*uk3));   
 Zkp=(Zkp1+Zkp2);%this is our first estimation
 r=[r;Zkp];
+
 %Initialising Process Covariance Matrix
 Pk3_=[((del_pz).^2) 0;0 ((del_pv3).^2)];
+
 %Predicted Process Covariance Matrix
 Pkp3=((A)*(Pk3_));
 Pkp4=((Pkp3)*(A'));
@@ -185,6 +214,7 @@ pkp5=(Pkp4-[0 Pkp4(2);Pkp4(3) 0]); %since the 2nd and 3rd term are not imp.
 R3=[((del_Z)^2) 0;0 ((del_VZ)^2)];
 H2=[1 0 ; 0 1];
 K=((pkp5)*H2')/((H2*pkp5*H2')+R3);
+
 %The New Observation
 k=k+1;
 Zkm=[Z(k);V3(k)];
@@ -192,6 +222,7 @@ C=[1 0;0 1];
 Zk1=C*Zkm;
 %Calculating the Current State
 Zk=[Zk; Zkp + K*(Zk1-(H2*(Zkp)))];
+
 %Updating the process covariance matrix
 Pkp3=((eye)-(K*H2))*pkp5;
 pk6=(Pkp3-[0 Pkp3(3);Pkp3(2) 0]);
